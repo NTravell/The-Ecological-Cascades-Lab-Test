@@ -1,4 +1,6 @@
-
+#this isnt great
+new_variable<-5
+#not it is great
 model {
 # Priors
 for(k in 1:4){
