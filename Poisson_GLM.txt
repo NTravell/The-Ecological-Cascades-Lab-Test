@@ -1,0 +1,23 @@
+
+model {
+# Priors
+for(k in 1:4){
+alpha[k] ~ dnorm(0, 1.0E-06)
+beta[k] ~ dnorm(0, 1.0E-06)
+}
+# Likelihood and computations for posterior predictive check
+for (i in 1:M){
+Cmax[i] ~ dpois(lambda[i])
+log(lambda[i]) <- alpha[facFor[i]] + beta[facFor[i]] * elev[i]
+# Fit assessments: Chi-square test statistic and posterior predictive check
+chi2[i] <- pow((Cmax[i]-lambda[i]),2) / (sqrt(lambda[i])+e) # obs.
+Cmax.new[i] ~ dpois(lambda[i]) # Replicate (new) data set
+chi2.new[i] <- pow((Cmax.new[i]-lambda[i]),2) / (sqrt(lambda[i])+e) # exp.
+}
+# Add up discrepancy measures for entire data set
+fit <- sum(chi2[]) # Omnibus test statistic actual data
+fit.new <- sum(chi2.new[]) # Omnibus test statistic replicate data
+# range of data as a second discrepancy measure
+obs.range <- max(Cmax[]) - min(Cmax[])
+exp.range <- max(Cmax.new[]) - min(Cmax.new[])
+}
